@@ -18,11 +18,20 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 public class TestLogin {
+    private final String login;
+    private final String password;
+    private final String wrontLogin;
     private WebDriver driver;
 
     public TestLogin() {
         GetDriver getDriver = new GetDriver();
         driver = getDriver.get();
+        driver.get("https://mantis-prova.base2.com.br/login_page.php");
+        driver.manage().window().maximize();
+
+        this.login = "richar.carvalho";
+        this.wrontLogin = "richar.carvalho23";
+        this.password = "wd19051995";
     }
 
     @After
@@ -34,50 +43,48 @@ public class TestLogin {
         return driver;
     }
 
-    public void login() {
-        driver.get("https://mantis-prova.base2.com.br/login_page.php");
-        driver.manage().window().maximize();
+    public void testLogin() {
         driver.findElement(By.name("username")).click();
-        driver.findElement(By.name("username")).sendKeys("richard.carvalho");
+        driver.findElement(By.name("username")).sendKeys(this.login);
         driver.findElement(By.name("password")).click();
-        driver.findElement(By.name("password")).sendKeys("wd19051995");
+        driver.findElement(By.name("password")).sendKeys(this.password);
         driver.findElement(By.name("perm_login")).click();
         driver.findElement(By.cssSelector(".button")).click();
     }
 
-    public void wrongLogin() {
-        driver.get("https://mantis-prova.base2.com.br/login_page.php");
-        driver.manage().window().maximize();
+    public void testWrongLogin() {
         driver.findElement(By.name("username")).click();
-        driver.findElement(By.name("username")).sendKeys("richard.carvalho2");
+        driver.findElement(By.name("username")).sendKeys(this.wrontLogin);
         driver.findElement(By.name("password")).click();
-        driver.findElement(By.name("password")).sendKeys("wd19051995");
+        driver.findElement(By.name("password")).sendKeys(this.password);
         driver.findElement(By.name("perm_login")).click();
         driver.findElement(By.cssSelector(".button")).click();
+
+                       
 
     }
 
     @Test
-    public void confirmName(){
-        this.login();
+    public void testConfirmName(){
+        this.testLogin();
         assertEquals(driver.findElement(By.cssSelector(".login-info-left > .italic")).getText(), "richard.carvalho");
-        this.logout();
+        this.testLogout();
     }
 
     @Test
-    public void confirmIncorrectName(){
-        this.login();
+    public void testConfirmIncorrectName(){
+        this.testLogin();
         assertNotEquals(driver.findElement(By.cssSelector(".login-info-left > .italic")).getText(), "richard.carvalho2");
-        this.logout();
+        this.testLogout();
     }
 
     @Test
-    public void confirmWrongLogin(){
-        this.wrongLogin();
+    public void testWrongLoginConfirmation(){
+        this.testWrongLogin();
         assertEquals(driver.findElement(By.cssSelector("font")).getText(), "Your account may be disabled or blocked or the username/password you entered is incorrect.");
     }
 
-    public void logout(){
+    public void testLogout(){
         driver.findElement(By.linkText("Logout")).click();
     }
 }
